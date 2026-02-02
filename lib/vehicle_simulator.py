@@ -21,6 +21,14 @@ class EngineState(Enum):
     STALLING = "stalling"
 
 
+class IgnitionState(Enum):
+    """Ignition key states"""
+    OFF = "off"          # Key off, ECU powered down
+    ACCESSORY = "acc"    # Accessories only, no engine control
+    ON = "on"            # Key on, engine off (KOEO) - UDS diagnostics available
+    START = "start"      # Cranking position
+
+
 @dataclass
 class SensorData:
     """Current sensor readings"""
@@ -145,6 +153,7 @@ class VehicleSimulator:
         self.config = config or self._default_config()
 
         # State
+        self.ignition_state = IgnitionState.OFF
         self.engine_state = EngineState.OFF
         self.sensors = SensorData()
         self.drive_cycle = DriveCycle()
@@ -384,16 +393,81 @@ class VehicleSimulator:
 
     # Control methods
 
+    def set_ignition(self, state: IgnitionState):
+        """
+        Set ignition state
+
+        Args:
+            state: Ignition state (OFF, ACCESSORY, ON, START)
+        """
+        self.ignition_state = state
+
+        # Handle state transitions
+        if state == IgnitionState.OFF:
+            # Key off - power down everything
+            self.engine_state = EngineState.OFF
+            self.sensors.rpm = 0
+            print(f"[Vehicle] Ignition: OFF - ECU powered down")
+
+        elif state == IgnitionState.ACCESSORY:
+            # Accessories only - no engine control
+            self.engine_state = EngineState.OFF
+            print(f"[Vehicle] Ignition: ACCESSORY - Limited functions available")
+
+        elif state == IgnitionState.ON:
+            # Key on, engine off (KOEO) - Full diagnostics available
+            self.engine_state = EngineState.OFF
+            self.sensors.rpm = 0
+            print(f"[Vehicle] Ignition: ON (KOEO) - Diagnostics available, engine off")
+
+        elif state == IgnitionState.START:
+            # Cranking position
+            if self.engine_state == EngineState.OFF:
+                self.engine_state = EngineState.CRANKING
+                self.sensors.rpm = 100
+            print(f"[Vehicle] Ignition: START - Cranking engine")
+
     def start_engine(self):
-        """Start the engine"""
+        """Start the engine (requires ignition ON or START)"""
+        if self.ignition_state == IgnitionState.OFF:
+            print("[Vehicle] Cannot start engine - ignition is OFF. Turn key to ON first.")
+            return False
+
+        if self.ignition_state == IgnitionState.ACCESSORY:
+            print("[Vehicle] Cannot start engine - ignition in ACCESSORY mode. Turn key to ON.")
+            return False
+
+        # Set ignition to ON if in START position
+        if self.ignition_state == IgnitionState.START:
+            self.ignition_state = IgnitionState.ON
+
         if self.engine_state == EngineState.OFF:
             self.engine_state = EngineState.CRANKING
             self.sensors.rpm = 100
+            print("[Vehicle] Engine starting...")
+            return True
+        return False
 
     def stop_engine(self):
-        """Stop the engine"""
+        """Stop the engine (ignition remains ON for KOEO diagnostics)"""
         self.engine_state = EngineState.OFF
         self.sensors.rpm = 0
+        # Keep ignition ON for KOEO diagnostics
+        if self.ignition_state != IgnitionState.OFF:
+            self.ignition_state = IgnitionState.ON
+        print("[Vehicle] Engine stopped (KOEO mode - diagnostics available)")
+
+    def key_on_engine_off(self):
+        """Set vehicle to KOEO state for diagnostics"""
+        self.set_ignition(IgnitionState.ON)
+        self.engine_state = EngineState.OFF
+        self.sensors.rpm = 0
+        print("[Vehicle] KOEO mode activated - Ready for diagnostics")
+
+    def key_off(self):
+        """Turn key off - powers down ECU"""
+        self.set_ignition(IgnitionState.OFF)
+        print("[Vehicle] Key OFF - ECU powered down")
 
     def set_throttle(self, position: float):
         """Set throttle position (0-100%)"""

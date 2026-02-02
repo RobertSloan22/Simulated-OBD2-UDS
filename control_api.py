@@ -246,13 +246,76 @@ class ControlAPI:
                     return jsonify({'status': 'error', 'message': 'Engine ECU not found'}), 404
 
                 if action == 'start':
-                    ecu.vehicle.start_engine()
-                    return jsonify({'status': 'ok', 'message': 'Engine started'})
+                    success = ecu.vehicle.start_engine()
+                    if success:
+                        return jsonify({'status': 'ok', 'message': 'Engine started'})
+                    else:
+                        return jsonify({'status': 'error', 'message': 'Cannot start engine - check ignition state'}), 400
                 elif action == 'stop':
                     ecu.vehicle.stop_engine()
-                    return jsonify({'status': 'ok', 'message': 'Engine stopped'})
+                    return jsonify({'status': 'ok', 'message': 'Engine stopped (KOEO mode)'})
                 else:
                     return jsonify({'status': 'error', 'message': f'Unknown action: {action}'}), 400
+
+            except Exception as e:
+                return jsonify({'status': 'error', 'message': str(e)}), 500
+
+        @self.app.route('/api/vehicle/ignition/<state>', methods=['POST'])
+        def ignition_control(state):
+            """Control ignition state (off/acc/on/start)"""
+            try:
+                from lib.multi_ecu import ECUType
+                from lib.vehicle_simulator import IgnitionState
+
+                ecu = self.coordinator.get_ecu_by_type(ECUType.ENGINE)
+                if not ecu:
+                    return jsonify({'status': 'error', 'message': 'Engine ECU not found'}), 404
+
+                # Map string to IgnitionState
+                state_map = {
+                    'off': IgnitionState.OFF,
+                    'accessory': IgnitionState.ACCESSORY,
+                    'acc': IgnitionState.ACCESSORY,
+                    'on': IgnitionState.ON,
+                    'start': IgnitionState.START
+                }
+
+                if state.lower() not in state_map:
+                    return jsonify({
+                        'status': 'error',
+                        'message': f'Invalid state: {state}. Use: off, acc, on, start'
+                    }), 400
+
+                ignition_state = state_map[state.lower()]
+                ecu.vehicle.set_ignition(ignition_state)
+
+                return jsonify({
+                    'status': 'ok',
+                    'ignition_state': ignition_state.value,
+                    'engine_state': ecu.vehicle.engine_state.value
+                })
+
+            except Exception as e:
+                return jsonify({'status': 'error', 'message': str(e)}), 500
+
+        @self.app.route('/api/vehicle/koeo', methods=['POST'])
+        def koeo_mode():
+            """Set vehicle to Key On Engine Off (KOEO) mode for diagnostics"""
+            try:
+                from lib.multi_ecu import ECUType
+                ecu = self.coordinator.get_ecu_by_type(ECUType.ENGINE)
+                if not ecu:
+                    return jsonify({'status': 'error', 'message': 'Engine ECU not found'}), 404
+
+                ecu.vehicle.key_on_engine_off()
+
+                return jsonify({
+                    'status': 'ok',
+                    'message': 'KOEO mode activated',
+                    'ignition_state': 'on',
+                    'engine_state': 'off',
+                    'diagnostics_available': True
+                })
 
             except Exception as e:
                 return jsonify({'status': 'error', 'message': str(e)}), 500
