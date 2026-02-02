@@ -1,0 +1,50 @@
+{
+  "vehicle": {
+    "make": "Generic",
+    "model": "Vehicle",
+    "year": 2020,
+    "vin": "1HGBH41JXMN109186",
+    "engine": "2.0L 4-Cylinder",
+    "transmission": "Automatic",
+    "fuel_type": "Gasoline"
+  },
+  "sensors": {
+    "rpm_idle": 750,
+    "rpm_max": 6500,
+    "coolant_temp_normal": 90,
+    "fuel_capacity": 50.0,
+    "engine_displacement": 2.0
+  },
+  "dtcs": [
+    {
+      "code": "P0420",
+      "description": "Catalyst System Efficiency Below Threshold",
+      "trigger_condition": "random",
+      "probability": 0.05,
+      "mil_illuminate": true
+    }
+  ],
+  "supported_pids": [
+    "0x00", "0x01", "0x03", "0x04", "0x05", "0x06", "0x07",
+    "0x0B", "0x0C", "0x0D", "0x0E", "0x0F", "0x10", "0x11",
+    "0x1C", "0x1F", "0x20", "0x21", "0x23", "0x2F", "0x30",
+    "0x31", "0x33", "0x40", "0x42", "0x5C"
+  ],
+  "uds_dids": {
+    "0xF187": "PART-NUM-12345",
+    "0xF18A": "SUPPLIER-XYZ",
+    "0xF18B": "20200101",
+    "0xF18C": "SN-123456789",
+    "0xF18E": "SW-v2.0.0",
+    "0xF190": "1HGBH41JXMN109186",
+    "0xF191": "HW-v1.0",
+    "0xF19E": "ENGINE-ECU"
+  },
+  "ecu": {
+    "serial_number": "ECU-SN-123456",
+    "software_version": "v2.0.0",
+    "hardware_version": "v1.0",
+    "calibration_id": "CALIB12345678",
+    "name": "ENGINE-ECU"
+  }
+}

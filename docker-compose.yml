@@ -4,8 +4,22 @@ services:
     container_name: mock-obd-ecu
     network_mode: host
     privileged: true
-    command: python mock_ecu.py
+    command: python mock_ecu_v2.py
     restart: unless-stopped
+    ports:
+      - "5000:5000"  # Control API
+
+  elm327-emulator:
+    build: .
+    container_name: mock-obd-elm327
+    network_mode: host
+    privileged: true
+    command: python elm327_emulator.py --host 0.0.0.0 --port 35000
+    depends_on:
+      - mock-ecu
+    restart: unless-stopped
+    ports:
+      - "35000:35000"
 
   test-client:
     build: .

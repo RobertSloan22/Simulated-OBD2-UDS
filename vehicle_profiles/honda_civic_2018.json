@@ -1,0 +1,57 @@
+{
+  "vehicle": {
+    "make": "Honda",
+    "model": "Civic",
+    "year": 2018,
+    "vin": "19XFC2F59JE012345",
+    "engine": "1.5L Turbo 4-Cylinder",
+    "transmission": "CVT",
+    "fuel_type": "Gasoline"
+  },
+  "sensors": {
+    "rpm_idle": 750,
+    "rpm_max": 6500,
+    "coolant_temp_normal": 92,
+    "fuel_capacity": 46.9,
+    "engine_displacement": 1.5
+  },
+  "dtcs": [
+    {
+      "code": "P0300",
+      "description": "Random/Multiple Cylinder Misfire Detected",
+      "trigger_condition": "random",
+      "probability": 0.02,
+      "mil_illuminate": true
+    },
+    {
+      "code": "P0420",
+      "description": "Catalyst System Efficiency Below Threshold (Bank 1)",
+      "trigger_condition": "random",
+      "probability": 0.03,
+      "mil_illuminate": true
+    }
+  ],
+  "supported_pids": [
+    "0x00", "0x01", "0x03", "0x04", "0x05", "0x06", "0x07",
+    "0x0B", "0x0C", "0x0D", "0x0E", "0x0F", "0x10", "0x11",
+    "0x1C", "0x1F", "0x20", "0x21", "0x23", "0x2F", "0x30",
+    "0x31", "0x33", "0x40", "0x42", "0x5C"
+  ],
+  "uds_dids": {
+    "0xF187": "37820-5AA-A04",
+    "0xF18A": "HONDA-DENSO",
+    "0xF18B": "20171215",
+    "0xF18C": "JHDM-SN-987654",
+    "0xF18E": "SW-CIVIC-2.1.4",
+    "0xF190": "19XFC2F59JE012345",
+    "0xF191": "HW-CIVIC-1.2",
+    "0xF19E": "CIVIC-ENGINE-ECU"
+  },
+  "ecu": {
+    "serial_number": "CIVIC-ECU-987654",
+    "software_version": "v2.1.4",
+    "hardware_version": "v1.2",
+    "calibration_id": "CIVIC2018-1.5T",
+    "name": "CIVIC-ENGINE-ECU"
+  }
+}

@@ -20,11 +20,21 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application files
 COPY mock_ecu.py .
+COPY mock_ecu_v2.py .
 COPY test_client.py .
+COPY test_client_v2.py .
+COPY elm327_emulator.py .
+COPY control_api.py .
 COPY setup_vcan.sh .
 
+# Copy lib modules
+COPY lib/ ./lib/
+
+# Copy vehicle profiles
+COPY vehicle_profiles/ ./vehicle_profiles/
+
 # Make scripts executable
-RUN chmod +x mock_ecu.py test_client.py setup_vcan.sh
+RUN chmod +x mock_ecu.py mock_ecu_v2.py test_client.py test_client_v2.py elm327_emulator.py control_api.py setup_vcan.sh
 
 # Default command
 CMD ["python", "mock_ecu.py"]

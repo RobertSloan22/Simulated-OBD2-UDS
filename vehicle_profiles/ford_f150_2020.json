@@ -1,0 +1,64 @@
+{
+  "vehicle": {
+    "make": "Ford",
+    "model": "F-150",
+    "year": 2020,
+    "vin": "1FTEW1EP0LKE12345",
+    "engine": "3.5L EcoBoost V6",
+    "transmission": "10-Speed Automatic",
+    "fuel_type": "Gasoline"
+  },
+  "sensors": {
+    "rpm_idle": 650,
+    "rpm_max": 5500,
+    "coolant_temp_normal": 88,
+    "fuel_capacity": 98.0,
+    "engine_displacement": 3.5
+  },
+  "dtcs": [
+    {
+      "code": "P0171",
+      "description": "System Too Lean (Bank 1)",
+      "trigger_condition": "random",
+      "probability": 0.03,
+      "mil_illuminate": true
+    },
+    {
+      "code": "P0420",
+      "description": "Catalyst System Efficiency Below Threshold (Bank 1)",
+      "trigger_condition": "random",
+      "probability": 0.04,
+      "mil_illuminate": true
+    },
+    {
+      "code": "P0430",
+      "description": "Catalyst System Efficiency Below Threshold (Bank 2)",
+      "trigger_condition": "random",
+      "probability": 0.04,
+      "mil_illuminate": true
+    }
+  ],
+  "supported_pids": [
+    "0x00", "0x01", "0x03", "0x04", "0x05", "0x06", "0x07",
+    "0x0B", "0x0C", "0x0D", "0x0E", "0x0F", "0x10", "0x11",
+    "0x1C", "0x1F", "0x20", "0x21", "0x23", "0x2F", "0x30",
+    "0x31", "0x33", "0x40", "0x42", "0x5C"
+  ],
+  "uds_dids": {
+    "0xF187": "JL3A-12A650-AKB",
+    "0xF18A": "FORD-BOSCH",
+    "0xF18B": "20191012",
+    "0xF18C": "FRD-SN-654321",
+    "0xF18E": "SW-F150-3.2.1",
+    "0xF190": "1FTEW1EP0LKE12345",
+    "0xF191": "HW-F150-2.0",
+    "0xF19E": "F150-ENGINE-ECU"
+  },
+  "ecu": {
+    "serial_number": "F150-ECU-654321",
+    "software_version": "v3.2.1",
+    "hardware_version": "v2.0",
+    "calibration_id": "F150-2020-35EB",
+    "name": "F150-ENGINE-ECU"
+  }
+}
