@@ -27,12 +27,12 @@ cd mockobd
 docker compose up -d mock-ecu elm327-emulator
 
 # Connect your app to: server-ip:35000
-# Access web dashboard: http://server-ip:5000
+# Access web dashboard: http://server-ip:5001
 ```
 
 ## 🎨 Web Dashboard
 
-Access the control dashboard at **http://localhost:5000** (or your server IP) to:
+Access the control dashboard at **http://localhost:5001** (or your server IP) to:
 
 - 🔑 **Control ignition states** (OFF/ACCESSORY/ON/START)
 - ⚙️ **Start/stop engine** with visual feedback
@@ -66,7 +66,7 @@ docker compose up -d
 Inject DTCs dynamically via API:
 ```bash
 # Inject catalyst fault
-curl -X POST http://localhost:5000/api/dtc/inject \
+curl -X POST http://localhost:5001/api/dtc/inject \
   -H 'Content-Type: application/json' \
   -d '{"code": "P0420"}'
 
@@ -154,7 +154,7 @@ The HTTP REST API provides runtime control:
 
 ```bash
 # Get vehicle state
-curl http://localhost:5000/api/vehicle/state
+curl http://localhost:5001/api/vehicle/state
 
 # Response:
 {
@@ -168,20 +168,20 @@ curl http://localhost:5000/api/vehicle/state
 }
 
 # Set vehicle parameters
-curl -X POST http://localhost:5000/api/vehicle/set \
+curl -X POST http://localhost:5001/api/vehicle/set \
   -H 'Content-Type: application/json' \
   -d '{"rpm": 2500, "speed": 80}'
 
 # Inject DTC with freeze frame
-curl -X POST http://localhost:5000/api/dtc/inject \
+curl -X POST http://localhost:5001/api/dtc/inject \
   -H 'Content-Type: application/json' \
   -d '{"ecu": "Engine Control Unit", "code": "P0420", "freeze_frame": true}'
 
 # List all DTCs
-curl http://localhost:5000/api/dtc/list
+curl http://localhost:5001/api/dtc/list
 
 # Start engine
-curl -X POST http://localhost:5000/api/vehicle/engine/start
+curl -X POST http://localhost:5001/api/vehicle/engine/start
 ```
 
 ### API Documentation
@@ -302,7 +302,7 @@ sudo usermod -aG docker $USER
 
 ```bash
 # Check what's using port 5000
-sudo lsof -i :5000
+sudo lsof -i :5001
 
 # Kill process or use different port
 python mock_ecu_v2.py --api-port 8080

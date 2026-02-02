@@ -17,6 +17,7 @@ import time
 import threading
 from typing import Optional
 import argparse
+import os
 
 # Import library modules
 from lib.isotp import ISOTPHandler, ISOTPConfig
@@ -188,7 +189,7 @@ class MockECU:
 class MockOBDSystem:
     """Complete Mock OBD-II system with multiple ECUs and Control API"""
 
-    def __init__(self, can_interface='vcan0', enable_api=True, api_port=5000):
+    def __init__(self, can_interface='vcan0', enable_api=True, api_port=5001):
         """
         Initialize Mock OBD-II system
 
@@ -282,9 +283,12 @@ def main():
     parser = argparse.ArgumentParser(description='Mock OBD-II/UDS ECU System')
     parser.add_argument('--interface', default='vcan0', help='CAN interface (default: vcan0)')
     parser.add_argument('--no-api', action='store_true', help='Disable Control API')
-    parser.add_argument('--api-port', type=int, default=5000, help='API port (default: 5000)')
+    parser.add_argument('--api-port', type=int, default=5001, help='API port (default: 5001)')
     parser.add_argument('--single-ecu', action='store_true', help='Run single ECU only (no multi-ECU)')
     args = parser.parse_args()
+
+    # Allow port to be overridden by environment variable
+    api_port = int(os.environ.get('CONTROL_API_PORT', args.api_port))
 
     try:
         if args.single_ecu:
@@ -302,7 +306,7 @@ def main():
             system = MockOBDSystem(
                 can_interface=args.interface,
                 enable_api=not args.no_api,
-                api_port=args.api_port
+                api_port=api_port
             )
             system.start()
 

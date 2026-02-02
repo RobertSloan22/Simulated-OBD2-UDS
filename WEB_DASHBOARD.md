@@ -6,12 +6,12 @@ The Mock OBD-II system includes a modern web-based control dashboard for easy ve
 
 When the system is running, open your browser and navigate to:
 ```
-http://localhost:5000
+http://localhost:5001
 ```
 
 Or if running on a remote server:
 ```
-http://your-server-ip:5000
+http://your-server-ip:5001
 ```
 
 The dashboard is accessible from any device on your network - laptop, tablet, or phone.
@@ -186,19 +186,19 @@ The dashboard is accessible from any device on your network:
 
 **Same machine:**
 ```
-http://localhost:5000
+http://localhost:5001
 ```
 
 **Other devices on network:**
 ```
-http://192.168.1.100:5000  # Replace with your server IP
+http://192.168.1.100:5001  # Replace with your server IP
 ```
 
 **Docker deployment:**
 Make sure port 5000 is mapped in docker-compose.yml:
 ```yaml
 ports:
-  - "5000:5000"
+  - "5000:5001"
 ```
 
 ---
@@ -209,14 +209,14 @@ ports:
 
 **Check API is running:**
 ```bash
-curl http://localhost:5000/api/health
+curl http://localhost:5001/api/health
 # Should return: {"status": "ok", "timestamp": ...}
 ```
 
 **Check Docker port mapping:**
 ```bash
 docker compose ps
-# Verify port 5000:5000 is mapped
+# Verify port 5000:5001 is mapped
 ```
 
 ### Connection errors
@@ -230,7 +230,7 @@ sudo ufw allow 5000
 **Check Docker network:**
 ```bash
 docker compose logs control-api
-# Look for "Control API started on http://0.0.0.0:5000"
+# Look for "Control API started on http://0.0.0.0:5001"
 ```
 
 ### Values not updating
@@ -255,14 +255,14 @@ The dashboard uses the Control API REST endpoints. You can use the same endpoint
 
 **Example: Inject DTC via curl**
 ```bash
-curl -X POST http://localhost:5000/api/dtc/inject \
+curl -X POST http://localhost:5001/api/dtc/inject \
   -H 'Content-Type: application/json' \
   -d '{"code": "P0420", "ecu": "Engine Control Unit"}'
 ```
 
 **Example: Get vehicle state**
 ```bash
-curl http://localhost:5000/api/vehicle/state | jq
+curl http://localhost:5001/api/vehicle/state | jq
 ```
 
 See [KOEO_TESTING.md](KOEO_TESTING.md) for complete API documentation.

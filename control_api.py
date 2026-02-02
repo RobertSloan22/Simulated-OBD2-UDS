@@ -17,7 +17,7 @@ import os
 class ControlAPI:
     """HTTP API for controlling the mock OBD system"""
 
-    def __init__(self, multi_ecu_coordinator, host: str = '0.0.0.0', port: int = 5000):
+    def __init__(self, multi_ecu_coordinator, host: str = '0.0.0.0', port: int = 5001):
         """
         Initialize Control API
 

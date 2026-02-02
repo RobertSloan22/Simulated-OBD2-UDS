@@ -176,25 +176,25 @@ python test_client_v2.py --test uds       # UDS service tests
 
 ```bash
 # Inject a DTC
-curl -X POST http://localhost:5000/api/dtc/inject \
+curl -X POST http://localhost:5001/api/dtc/inject \
   -H 'Content-Type: application/json' \
   -d '{"ecu": "Engine Control Unit", "code": "P0420", "freeze_frame": true}'
 
 # Get vehicle state
-curl http://localhost:5000/api/vehicle/state
+curl http://localhost:5001/api/vehicle/state
 
 # Set vehicle parameters
-curl -X POST http://localhost:5000/api/vehicle/set \
+curl -X POST http://localhost:5001/api/vehicle/set \
   -H 'Content-Type: application/json' \
   -d '{"rpm": 2500, "speed": 80, "throttle": 45}'
 
 # Clear all DTCs
-curl -X POST http://localhost:5000/api/dtc/clear \
+curl -X POST http://localhost:5001/api/dtc/clear \
   -H 'Content-Type: application/json' \
   -d '{}'
 
 # Reset readiness monitors
-curl -X POST http://localhost:5000/api/readiness/reset \
+curl -X POST http://localhost:5001/api/readiness/reset \
   -H 'Content-Type: application/json' \
   -d '{"ecu": "Engine Control Unit"}'
 ```
@@ -339,13 +339,13 @@ candump vcan0
 
 ```bash
 # Health check
-curl http://localhost:5000/api/health
+curl http://localhost:5001/api/health
 
 # ECU status
-curl http://localhost:5000/api/ecu/info | jq
+curl http://localhost:5001/api/ecu/info | jq
 
 # Vehicle state
-watch -n 1 'curl -s http://localhost:5000/api/vehicle/state | jq'
+watch -n 1 'curl -s http://localhost:5001/api/vehicle/state | jq'
 ```
 
 ## Troubleshooting
@@ -361,7 +361,7 @@ isotp = ISOTPHandler(bus, tx_id, rx_id, ISOTPConfig())
 
 **Solution:** Check DTC state (may be pending, not confirmed):
 ```bash
-curl http://localhost:5000/api/dtc/list?ecu=Engine%20Control%20Unit
+curl http://localhost:5001/api/dtc/list?ecu=Engine%20Control%20Unit
 ```
 
 ### Issue: Readiness monitors incomplete

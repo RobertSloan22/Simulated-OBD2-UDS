@@ -6,8 +6,10 @@ services:
     privileged: true
     command: python mock_ecu_v2.py
     restart: unless-stopped
+    environment:
+      - CONTROL_API_PORT=5001  # Changed from 5000 to avoid conflicts
     ports:
-      - "5000:5000"  # Control API
+      - "5001:5001"  # Control API (changed from 5000)
 
   elm327-emulator:
     build: .

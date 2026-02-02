@@ -176,7 +176,7 @@ docker compose restart mock-ecu
 ### Using Different Port
 
 ```bash
-docker compose run --rm -p 5000:5000 \
+docker compose run --rm -p 5000:5001 \
   elm327-emulator python elm327_emulator.py --port 5000
 ```
 

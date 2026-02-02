@@ -37,7 +37,7 @@ docker compose build
 docker compose up -d mock-ecu elm327-emulator
 
 # Connect your app to: server-ip:35000
-# Control API available at: http://server-ip:5000
+# Control API available at: http://server-ip:5001
 ```
 
 **Full v2.0 Guide:** [README_V2.md](README_V2.md)
