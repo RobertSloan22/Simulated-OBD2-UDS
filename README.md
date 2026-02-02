@@ -59,6 +59,8 @@ docker compose run --rm test-client
 
 ### Version 2.0
 - **[README_V2.md](README_V2.md)** - Complete user guide
+- **[WEB_DASHBOARD.md](WEB_DASHBOARD.md)** - Web dashboard guide
+- **[KOEO_TESTING.md](KOEO_TESTING.md)** - KOEO testing guide
 - **[CLAUDE_V2.md](CLAUDE_V2.md)** - Technical documentation
 - **[APP_TESTING.md](APP_TESTING.md)** - App testing guide
 

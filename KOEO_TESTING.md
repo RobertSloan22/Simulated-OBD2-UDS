@@ -21,7 +21,20 @@ This state is required for many advanced diagnostics like:
 
 ## Quick Start: KOEO Mode
 
-### Method 1: Using Control API (Easiest)
+### Method 1: Using Web Dashboard (Easiest)
+
+Open your browser and navigate to **http://localhost:5000** (or your server IP):
+
+1. Click the **🟢 ON (KOEO)** button in the Ignition Control card
+2. Or click the **🔧 KOEO Mode** button for quick activation
+3. Monitor the Vehicle Status card to confirm:
+   - Ignition State shows "ON (KOEO)"
+   - Engine RPM is 0
+   - ECU is responsive
+
+The dashboard provides visual feedback and real-time status updates.
+
+### Method 2: Using Control API (Command Line)
 
 ```bash
 # Set vehicle to KOEO mode (one command)
@@ -37,7 +50,7 @@ curl -X POST http://localhost:5000/api/vehicle/koeo
 }
 ```
 
-### Method 2: Manual Ignition Control
+### Method 3: Manual Ignition Control
 
 ```bash
 # Turn ignition to ON position

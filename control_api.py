@@ -6,11 +6,12 @@ HTTP REST API for runtime control and fault injection.
 Allows dynamic DTC injection, vehicle state control, and system monitoring.
 """
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import threading
 from typing import Optional, Dict, Any
 import time
+import os
 
 
 class ControlAPI:
@@ -42,6 +43,14 @@ class ControlAPI:
 
     def _register_routes(self):
         """Register API endpoints"""
+
+        # Dashboard UI
+        @self.app.route('/', methods=['GET'])
+        @self.app.route('/dashboard', methods=['GET'])
+        def dashboard():
+            """Serve the web dashboard UI"""
+            static_dir = os.path.join(os.path.dirname(__file__), 'static')
+            return send_from_directory(static_dir, 'dashboard.html')
 
         @self.app.route('/api/health', methods=['GET'])
         def health():
@@ -412,7 +421,8 @@ class ControlAPI:
         self.server_thread = threading.Thread(target=self._run_server, daemon=True)
         self.server_thread.start()
         print(f"[API] Control API started on http://{self.host}:{self.port}")
-        print(f"[API] Access documentation at http://{self.host}:{self.port}/api/health")
+        print(f"[API] Web Dashboard available at http://{self.host}:{self.port}/")
+        print(f"[API] API health check at http://{self.host}:{self.port}/api/health")
 
     def _run_server(self):
         """Run Flask server"""

@@ -27,7 +27,22 @@ cd mockobd
 docker compose up -d mock-ecu elm327-emulator
 
 # Connect your app to: server-ip:35000
+# Access web dashboard: http://server-ip:5000
 ```
+
+## 🎨 Web Dashboard
+
+Access the control dashboard at **http://localhost:5000** (or your server IP) to:
+
+- 🔑 **Control ignition states** (OFF/ACCESSORY/ON/START)
+- ⚙️ **Start/stop engine** with visual feedback
+- 📊 **Monitor vehicle status** in real-time (RPM, speed, temp, throttle)
+- ⚠️ **Inject and clear DTCs** with one click
+- 🔧 **Activate KOEO mode** for advanced diagnostics
+- 📈 **Set vehicle parameters** (RPM, speed, throttle)
+- 🖥️ **View ECU information** (Engine, Transmission, ABS)
+
+The dashboard automatically refreshes every 2 seconds and provides instant feedback for all operations.
 
 ## 📋 Requirements
 

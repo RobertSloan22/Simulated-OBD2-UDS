@@ -33,6 +33,9 @@ COPY lib/ ./lib/
 # Copy vehicle profiles
 COPY vehicle_profiles/ ./vehicle_profiles/
 
+# Copy static files (dashboard UI)
+COPY static/ ./static/
+
 # Make scripts executable
 RUN chmod +x mock_ecu.py mock_ecu_v2.py test_client.py test_client_v2.py elm327_emulator.py control_api.py setup_vcan.sh
 

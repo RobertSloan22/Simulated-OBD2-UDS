@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock OBD-II Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .status-display {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .status-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .status-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%);
+            color: white;
+        }
+
+        .btn-full {
+            grid-column: 1 / -1;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .dtc-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .dtc-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .dtc-code {
+            font-weight: bold;
+            color: #dc3545;
+            font-size: 1.1em;
+        }
+
+        .dtc-desc {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(180deg);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-on {
+            background: #28a745;
+            box-shadow: 0 0 8px #28a745;
+        }
+
+        .status-off {
+            background: #dc3545;
+        }
+
+        .status-acc {
+            background: #ffc107;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Mock OBD-II Control Dashboard</h1>
+
+        <div id="alertContainer"></div>
+
+        <div class="grid">
+            <!-- Vehicle Status Card -->
+            <div class="card">
+                <h2>📊 Vehicle Status</h2>
+                <div class="status-display">
+                    <div class="status-item">
+                        <div class="status-label">Ignition State</div>
+                        <div class="status-value" id="ignitionStatus">
+                            <span class="status-indicator status-off"></span>OFF
+                        </div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Engine RPM</div>
+                        <div class="status-value" id="rpmValue">0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Speed (km/h)</div>
+                        <div class="status-value" id="speedValue">0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Coolant Temp (°C)</div>
+                        <div class="status-value" id="tempValue">20</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">Throttle (%)</div>
+                        <div class="status-value" id="throttleValue">0</div>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-label">MIL Status</div>
+                        <div class="status-value" id="milStatus">OFF</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ignition Control Card -->
+            <div class="card">
+                <h2>🔑 Ignition Control</h2>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="setIgnition('off')">🔴 OFF</button>
+                    <button class="btn btn-warning" onclick="setIgnition('acc')">🟡 ACCESSORY</button>
+                    <button class="btn btn-success" onclick="setIgnition('on')">🟢 ON (KOEO)</button>
+                    <button class="btn btn-primary" onclick="setIgnition('start')">⚡ START</button>
+                    <button class="btn btn-success btn-full" onclick="setKOEO()">🔧 KOEO Mode</button>
+                </div>
+            </div>
+
+            <!-- Engine Control Card -->
+            <div class="card">
+                <h2>⚙️ Engine Control</h2>
+                <div class="button-group">
+                    <button class="btn btn-success btn-full" onclick="startEngine()">▶️ Start Engine</button>
+                    <button class="btn btn-danger btn-full" onclick="stopEngine()">⏹️ Stop Engine</button>
+                </div>
+            </div>
+
+            <!-- Vehicle Parameters Card -->
+            <div class="card">
+                <h2>📈 Vehicle Parameters</h2>
+                <div class="input-group">
+                    <label for="rpmInput">RPM:</label>
+                    <input type="number" id="rpmInput" min="0" max="7000" step="100" value="0">
+                </div>
+                <div class="input-group">
+                    <label for="speedInput">Speed (km/h):</label>
+                    <input type="number" id="speedInput" min="0" max="250" step="5" value="0">
+                </div>
+                <div class="input-group">
+                    <label for="throttleInput">Throttle (%):</label>
+                    <input type="number" id="throttleInput" min="0" max="100" step="5" value="0">
+                </div>
+                <button class="btn btn-primary btn-full" onclick="setVehicleState()">Apply Changes</button>
+            </div>
+
+            <!-- DTC Management Card -->
+            <div class="card">
+                <h2>⚠️ DTC Management</h2>
+                <div class="input-group">
+                    <label for="dtcSelect">Select DTC:</label>
+                    <select id="dtcSelect">
+                        <option value="P0420">P0420 - Catalyst Efficiency</option>
+                        <option value="P0300">P0300 - Random Misfire</option>
+                        <option value="P0171">P0171 - System Too Lean</option>
+                        <option value="P0172">P0172 - System Too Rich</option>
+                        <option value="P0128">P0128 - Coolant Thermostat</option>
+                        <option value="P0562">P0562 - System Voltage Low</option>
+                        <option value="P0443">P0443 - EVAP Purge Valve</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-warning" onclick="injectDTC()">➕ Inject DTC</button>
+                    <button class="btn btn-danger" onclick="clearDTCs()">🗑️ Clear All DTCs</button>
+                </div>
+                <div class="dtc-list" id="dtcList"></div>
+            </div>
+
+            <!-- ECU Information Card -->
+            <div class="card">
+                <h2>🖥️ ECU Information</h2>
+                <div id="ecuInfo" class="status-display">
+                    <div class="status-item">
+                        <div class="status-label">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="refresh-btn" onclick="refreshAll()" title="Refresh All Data">🔄</button>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.display = 'block';
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.style.display = 'none';
+                container.removeChild(alert);
+            }, 3000);
+        }
+
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {'Content-Type': 'application/json'}
+                };
+                if (body) options.body = JSON.stringify(body);
+
+                const response = await fetch(API_BASE + endpoint, options);
+                const data = await response.json();
+
+                if (data.status === 'error') {
+                    showAlert(data.message || 'Operation failed', 'error');
+                    return null;
+                }
+
+                return data;
+            } catch (error) {
+                showAlert('Connection error: ' + error.message, 'error');
+                return null;
+            }
+        }
+
+        async function setIgnition(state) {
+            const result = await apiCall(`/vehicle/ignition/${state}`, 'POST');
+            if (result) {
+                showAlert(`Ignition set to ${state.toUpperCase()}`);
+                updateVehicleStatus();
+            }
+        }
+
+        async function setKOEO() {
+            const result = await apiCall('/vehicle/koeo', 'POST');
+            if (result) {
+                showAlert('KOEO mode activated (Key On Engine Off)');
+                updateVehicleStatus();
+            }
+        }
+
+        async function startEngine() {
+            const result = await apiCall('/vehicle/engine/start', 'POST');
+            if (result) {
+                showAlert('Engine started');
+                updateVehicleStatus();
+            }
+        }
+
+        async function stopEngine() {
+            const result = await apiCall('/vehicle/engine/stop', 'POST');
+            if (result) {
+                showAlert('Engine stopped');
+                updateVehicleStatus();
+            }
+        }
+
+        async function setVehicleState() {
+            const rpm = document.getElementById('rpmInput').value;
+            const speed = document.getElementById('speedInput').value;
+            const throttle = document.getElementById('throttleInput').value;
+
+            const result = await apiCall('/vehicle/set', 'POST', {
+                rpm: parseFloat(rpm),
+                speed: parseFloat(speed),
+                throttle: parseFloat(throttle)
+            });
+
+            if (result) {
+                showAlert('Vehicle parameters updated');
+                updateVehicleStatus();
+            }
+        }
+
+        async function injectDTC() {
+            const code = document.getElementById('dtcSelect').value;
+            const result = await apiCall('/dtc/inject', 'POST', {
+                ecu: 'Engine Control Unit',
+                code: code,
+                freeze_frame: true
+            });
+
+            if (result) {
+                showAlert(`DTC ${code} injected`);
+                updateDTCList();
+                updateVehicleStatus();
+            }
+        }
+
+        async function clearDTCs() {
+            const result = await apiCall('/dtc/clear', 'POST');
+            if (result) {
+                showAlert('All DTCs cleared');
+                updateDTCList();
+                updateVehicleStatus();
+            }
+        }
+
+        async function updateVehicleStatus() {
+            const data = await apiCall('/vehicle/state');
+            if (!data) return;
+
+            const state = data.state;
+            document.getElementById('rpmValue').textContent = Math.round(state.rpm);
+            document.getElementById('speedValue').textContent = Math.round(state.speed);
+            document.getElementById('tempValue').textContent = Math.round(state.coolant_temp);
+            document.getElementById('throttleValue').textContent = Math.round(state.throttle_position);
+            document.getElementById('milStatus').textContent = state.mil_status ? 'ON' : 'OFF';
+
+            // Update ignition indicator (inferred from RPM and battery)
+            const ignitionEl = document.getElementById('ignitionStatus');
+            const indicator = ignitionEl.querySelector('.status-indicator');
+
+            if (state.rpm > 0) {
+                ignitionEl.innerHTML = '<span class="status-indicator status-on"></span>RUNNING';
+            } else if (state.battery_voltage > 12) {
+                ignitionEl.innerHTML = '<span class="status-indicator status-on"></span>ON (KOEO)';
+            } else {
+                ignitionEl.innerHTML = '<span class="status-indicator status-off"></span>OFF';
+            }
+        }
+
+        async function updateDTCList() {
+            const data = await apiCall('/dtc/list?ecu=Engine Control Unit');
+            if (!data) return;
+
+            const listEl = document.getElementById('dtcList');
+            listEl.innerHTML = '';
+
+            if (data.dtcs.length === 0) {
+                listEl.innerHTML = '<div class="dtc-item"><div class="dtc-desc">No active DTCs</div></div>';
+                return;
+            }
+
+            data.dtcs.forEach(dtc => {
+                const item = document.createElement('div');
+                item.className = 'dtc-item';
+                item.innerHTML = `
+                    <div class="dtc-code">${dtc.code}</div>
+                    <div class="dtc-desc">${dtc.description}</div>
+                    <div class="dtc-desc">State: ${dtc.state} | Count: ${dtc.count} | MIL: ${dtc.mil_illuminate ? 'ON' : 'OFF'}</div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        async function updateECUInfo() {
+            const data = await apiCall('/ecu/list');
+            if (!data) return;
+
+            const infoEl = document.getElementById('ecuInfo');
+            infoEl.innerHTML = '';
+
+            data.ecus.forEach(ecu => {
+                const item = document.createElement('div');
+                item.className = 'status-item';
+                item.innerHTML = `
+                    <div class="status-label">${ecu.name}</div>
+                    <div class="status-value" style="font-size: 0.9em;">${ecu.request_id} → ${ecu.response_id}</div>
+                `;
+                infoEl.appendChild(item);
+            });
+        }
+
+        async function refreshAll() {
+            await Promise.all([
+                updateVehicleStatus(),
+                updateDTCList(),
+                updateECUInfo()
+            ]);
+        }
+
+        // Auto-refresh every 2 seconds
+        setInterval(updateVehicleStatus, 2000);
+
+        // Initial load
+        refreshAll();
+    </script>
+</body>
+</html>
