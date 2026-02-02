@@ -102,14 +102,16 @@ class ControlAPI:
                 if not ecu:
                     return jsonify({'status': 'error', 'message': f'ECU not found: {ecu_name}'}), 404
 
-                # Inject DTC
+                # Inject DTC multiple times to make it CONFIRMED (not just PENDING)
+                # This ensures Mode 03 will return it
                 sensors = ecu.vehicle.get_sensor_data()
-                success = ecu.dtc_manager.inject_dtc(code, sensors, capture_freeze_frame=freeze_frame)
+                for _ in range(3):  # Inject 3 times to reach CONFIRMED state
+                    success = ecu.dtc_manager.inject_dtc(code, sensors, capture_freeze_frame=freeze_frame)
 
                 if success:
                     return jsonify({
                         'status': 'ok',
-                        'message': f'DTC {code} injected into {ecu_name}',
+                        'message': f'DTC {code} injected into {ecu_name} (CONFIRMED)',
                         'freeze_frame_captured': freeze_frame
                     })
                 else:

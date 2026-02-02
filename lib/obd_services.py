@@ -40,10 +40,15 @@ class OBDServiceHandler:
         Returns:
             Response bytes or None for invalid request
         """
-        if len(request) < 2:
+        if len(request) < 1:
             return None
 
         mode = request[0]
+
+        # Mode 03, 04, 07, 0A don't require additional bytes (no PID)
+        # Mode 01, 02, 06, 09 require PID
+        if mode in [0x01, 0x02, 0x06, 0x09] and len(request) < 2:
+            return None
 
         if mode == 0x01:
             return self._mode_01_current_data(request)
